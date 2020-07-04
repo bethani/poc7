@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="aa66aae1-a270-4c6d-8c16-f7d0e0cd91fe" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="ac76cb64-550b-4dd6-b07a-f74d0059c6ad" >
+		<salesforce:cached-basic-connection username="wendifraw15@gmail.com" password="Ethiopia@11" securityToken="gxfcvABVKmBZoR4OO4hcByA1" />
+	</salesforce:sfdc-config>
+	<http:listener-config name="HTTP_Listener_config3" doc:name="HTTP Listener config" doc:id="2d0bf9ce-53e7-4cc4-9a99-de06dcd1c4ba" >
+		<http:listener-connection host="0.0.0.0" port="8084" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="a4886e4c-09a6-4c83-bb73-8fee861e87d2" >
+		<file:connection workingDir="C:\Users\Wendifraw\Desktop\B14 file" />
+	</file:config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="78a07a92-ba75-44ed-b89d-47cf82cc1ae4" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="users" />
+	</db:config>
+	<flow name="salseforceFlow" doc:id="aa050c53-ce75-4f77-a787-f3538c8c0103" >
+		<http:listener doc:name="Listener" doc:id="0e9d00a3-9eaf-4af4-82c2-a1bad88b00f4" config-ref="HTTP_Listener_config1" path="/salse"/>
+		<file:read doc:name="Read" doc:id="a8090f8f-10c3-44d4-b5b6-232a42ea6151" path="C:\Users\Wendifraw\Desktop\B14 file\140file.csv.xlsx"/>
+		<ee:transform doc:name="Transform Message" doc:id="f0d30175-3fc9-4b9a-8a2e-0834ffd2f70b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create-bulk doc:name="Create bulk" doc:id="45254742-00e3-44ea-8760-1aa95a9efa5a" config-ref="Salesforce_Config" type="users__c"/>
+	</flow>
+	<flow name="salseforceFlow1" doc:id="82e259bf-169e-439f-9186-34a647b43cd1" >
+		<http:listener doc:name="Listener" doc:id="628b6349-a52d-49d3-a04b-75b189b5d165" config-ref="HTTP_Listener_config3" path="/data"/>
+		<file:write doc:name="Write" doc:id="e483437c-1d43-43a7-ae4f-36104c8e4342" config-ref="File_Config" path="C:\Users\Wendifraw\Desktop\B14 file\140file.csv.xlsx"/>
+		<db:insert doc:name="Insert" doc:id="4c4fc5f2-e299-4740-8e85-68b601a07c84" config-ref="Database_Config"/>
+	</flow>
+</mule>

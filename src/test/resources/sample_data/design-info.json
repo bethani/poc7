@@ -1,0 +1,13 @@
+{
+  "sampleData": {
+    "3b5c87fa-66fc-492b-87c8-5847f58146b3": {
+      "payload": "sample_data/unknown.dwl"
+    },
+    "e0b4a134-2cbb-45c5-9285-afb221a71b03": {
+      "payload": "sample_data/unknown_1.dwl"
+    },
+    "9fd401f0-b771-4c83-8505-a72ae8ee5d22": {
+      "payload": "sample_data/unknown_2.dwl"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="users" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+    <types:type name="users1" format="json">
+      <types:shape format="weave" example="examples/1user-1.json"><![CDATA[%dw 2.0
+
+type users1 = {|
+  user: Array<{|    id: String,     firstname: String,     middlename: String,     lastname: String,     city: String,     state: String,     address: String,     email: String  |}>
+|} {"example": "{\\\"user\\\":[{\\\"id\\\":\\\"693cacff-147d-4b84-add8-dad773730508\\\",\\\"firstname\\\":\\\"piter\\\",\\\"middlename\\\":\\\"gg\\\",\\\"lastname\\\":\\\"gg\\\",\\\"city\\\":\\\"jj\\\",\\\"state\\\":\\\"New York\\\",\\\"address\\\":\\\"gg\\\",\\\"email\\\":\\\"ggh@hh.nn\\\"},{\\\"id\\\":\\\"53634496-86ee-420b-9d36-64969e417833\\\",\\\"firstname\\\":\\\"tomas\\\",\\\"middlename\\\":\\\"dsfsd\\\",\\\"lastname\\\":\\\"dsfsdf\\\",\\\"city\\\":\\\"AA\\\",\\\"state\\\":\\\"California\\\",\\\"address\\\":\\\"sdsd\\\",\\\"email\\\":\\\"dsdsf@gmail.com\\\"}]}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#3b5c87fa-66fc-492b-87c8-5847f58146b3">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="users1"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#9fd401f0-b771-4c83-8505-a72ae8ee5d22">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="users1"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6309008c-aa8f-4987-9f89-78a9a2456ff8" >
+		<http:listener-connection host="0.0.0.0" port="8083" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="6d679b83-0eb5-4d62-9ce6-b8ef2f5a88e9" >
+		<http:request-connection host="dummy.restapiexample.com" />
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_config2" doc:name="HTTP Listener config" doc:id="179a7ac5-a21e-44e8-808b-f86be465359e" >
+		<http:listener-connection host="0.0.0.0" port="8088" />
+	</http:listener-config>
+	<flow name="datawaveFlow" doc:id="6ab6d540-3fe2-4642-b2b4-7e5390666d34" >
+		<http:listener doc:name="Listener" doc:id="1fdac9d8-0821-48fc-9e20-d1d4d3e338a4" config-ref="HTTP_Listener_config" path="/wave"/>
+		<set-variable value="" doc:name="Set Variable" doc:id="e011bcea-3b38-4152-bb19-f907eafe596c" variableName="myvar"/>
+		<ee:transform doc:name="Transform Message" doc:id="3b5c87fa-66fc-492b-87c8-5847f58146b3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var action =if(payload.price < 95)
+"buy"
+else if (payload.price > 100)
+"sell"
+else
+"hold"
+---
+{
+	price: payload.price,
+	action: action
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="datawaveFlow1" doc:id="66998091-0b4f-4d8e-9b21-60e8c46a3f00" >
+		<http:listener doc:name="/Get Employee" doc:id="cc5479d2-a3a9-4d65-b8b5-44813b551b9e" config-ref="HTTP_Listener_config" path="/Employee"/>
+		<http:request method="GET" doc:name="Call REST Employee WS" doc:id="1499bb61-f5c0-427e-b728-0f5287e08d5d" config-ref="HTTP_Request_configuration" path="/api/v1/employees"/>
+		<ee:transform doc:name="Transform Message" doc:id="e0b4a134-2cbb-45c5-9285-afb221a71b03" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+
+payload ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="615bcb59-81f3-4579-bd3d-42f2dce4ded7" />
+	</flow>
+	<flow name="datawaveFlow2" doc:id="899e5b6e-b900-4966-a179-131c7624db52" >
+		<http:listener doc:name="Listener" doc:id="73c95fa2-704e-439b-a67f-322149e4fd5f" config-ref="HTTP_Listener_config2" path="/data"/>
+		<ee:transform doc:name="Transform Message" doc:id="9fd401f0-b771-4c83-8505-a72ae8ee5d22" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ("$$" : $)
+//payload map (value, index) -> { (index) : value} ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
